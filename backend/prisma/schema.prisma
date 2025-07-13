@@ -13,3 +13,169 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id             String   @id @default(uuid())
+  email          String   @unique
+  password       String
+  name           String
+  surname        String
+  emailVerified  Boolean  @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  profile        Profile?
+  verificationTokens EmailVerificationToken[]
+  passwordResetTokens PasswordResetToken[]
+  workouts       Workout[]
+  mealLogs       MealLog[]
+  progressLogs   ProgressLog[]
+  plans          Plan[]
+  bodyImages     BodyImage[]
+  contactMessages ContactMessage[]
+  unitPreference UnitPreference @relation(fields: [unitPreferenceId], references: [id])
+  unitPreferenceId String
+  goals          UserGoal[]
+}
+
+model Goal {
+  id    String   @id @default(uuid())
+  name  String   @unique
+  users UserGoal[]
+}
+
+model UserGoal {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+  goal   Goal   @relation(fields: [goalId], references: [id])
+  goalId String
+}
+
+model Profile {
+  id        String  @id @default(uuid())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String  @unique
+  weight    Float?
+  weightUnit WeightUnit @default(KG)
+  height    Float?
+  heightUnit HeightUnit @default(CM)
+  daysPerWeek Int?
+  completed  Boolean @default(false)
+}
+
+enum WeightUnit {
+  KG
+  LBS
+}
+
+enum HeightUnit {
+  CM
+  INCHES
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+}
+
+model Plan {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  type        PlanType
+  startDate   DateTime
+  endDate     DateTime
+  details     String  
+  createdAt   DateTime @default(now())
+}
+
+enum PlanType {
+  NUTRITION
+  TRAINING
+}
+
+model ProgressLog {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  date      DateTime
+  weight    Float?
+  weightUnit WeightUnit?
+  notes     String?
+}
+
+model Workout {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  date        DateTime
+  completed   Boolean  @default(false)
+  exercises   WorkoutExercise[]
+}
+
+model WorkoutExercise {
+  id          String   @id @default(uuid())
+  workout     Workout  @relation(fields: [workoutId], references: [id])
+  workoutId   String
+  name        String
+  sets        Int?
+  reps        Int?
+  weight      Float?
+  order       Int?     
+}
+
+model MealLog {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  date        DateTime
+  mealType    String  
+  calories    Int?
+  protein     Float?
+  carbs       Float?
+  fat         Float?
+  notes       String?
+}
+
+model BodyImage {
+  id          String   @id @default(uuid())
+  user        User     @relation(fields: [userId], references: [id])
+  userId      String
+  type        BodyImageType
+  url         String
+  createdAt   DateTime @default(now())
+  aiScanData  String?  
+  relatedTo   String? 
+}
+
+enum BodyImageType {
+  BEFORE
+  AFTER_AI
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  user      User?    @relation(fields: [userId], references: [id])
+  userId    String?
+  email     String
+  message   String
+  createdAt DateTime @default(now())
+}
+
+model UnitPreference {
+  id          String   @id @default(uuid())
+  weightUnit  WeightUnit @default(KG)
+  heightUnit  HeightUnit @default(CM)
+  users       User[]
+}
