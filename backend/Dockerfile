@@ -1,24 +1,19 @@
-# Use official Node.js image
 FROM node:20
 
-# Create app directory
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y netcat-openbsd && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y netcat-openbsd
-
-# Copy package files and install dependencies
 COPY package*.json ./
 RUN npm install
 
-# Copy the rest of your app
+COPY prisma ./prisma
 COPY . .
 
-# Expose the backend port
-EXPOSE 5000
-
-# Start the app
-CMD ["npm", "run", "dev"]
+RUN npx prisma generate
 
 RUN npm install -g ts-node
-CMD ["npx", "ts-node", "app.ts"]
+
+EXPOSE 5000
+
+CMD ["npm", "run", "dev"]
