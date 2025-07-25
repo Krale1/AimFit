@@ -9,9 +9,8 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user, account }) {
       try {
-        // Ensure account and id_token exist
         if (!account?.id_token) {
           console.error("No id_token from Google account");
           return false;
@@ -34,10 +33,14 @@ export const authOptions = {
         return false;
       }
     },
+
     async session({ session, token }) {
-      // Attach user id to session object
       session.user.id = token.sub;
       return session;
+    },
+
+    async redirect({ url, baseUrl }) {
+      return "/dashboard"; 
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
