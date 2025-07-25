@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
   const [form, setForm] = useState({
@@ -25,17 +26,20 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: form.firstName,
-          surname: form.lastName,
-          email: form.email,
-          password: form.password,
-          confirmPassword: form.confirmPassword,
-        }),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/register`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: form.firstName,
+            surname: form.lastName,
+            email: form.email,
+            password: form.password,
+            confirmPassword: form.confirmPassword,
+          }),
+        }
+      );
 
       const data = await res.json();
 
@@ -45,8 +49,16 @@ export default function RegisterPage() {
         return;
       }
 
-      setSuccess("Registration successful! Please check your email to verify your account.");
-      setForm({ firstName: "", lastName: "", email: "", password: "", confirmPassword: "" });
+      setSuccess(
+        "Registration successful! Please check your email to verify your account."
+      );
+      setForm({
+        firstName: "",
+        lastName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -58,10 +70,15 @@ export default function RegisterPage() {
     <div className="flex items-center bg-background">
       <div className="lg:w-1/2 w-[90%] mx-auto">
         <div className="lg:w-[500px] w-full mx-auto rounded-xl shadow-lg flex flex-col gap-4">
-          <h1 className="text-title text-2xl font-bold">Register your account</h1>
+          <h1 className="text-title text-2xl font-bold">
+            Register your account
+          </h1>
           <p className="text-body">
             Already have an account?{" "}
-            <a href="/login" className="text-primary font-medium hover:underline">
+            <a
+              href="/login"
+              className="text-primary font-medium hover:underline"
+            >
               Log In Now
             </a>
           </p>
@@ -133,8 +150,14 @@ export default function RegisterPage() {
                 placeholder="Confirm Password"
               />
             </div>
-            {error && <div className="text-error text-sm">{error}</div>}
-            {success && <div className="text-success text-sm">{success}</div>}
+            {error && (
+              <div className="text-red-500 font-medium text-sm">{error}</div>
+            )}
+            {success && (
+              <div className="text-green-500 font-medium text-sm">
+                {success}
+              </div>
+            )}
             <button
               type="submit"
               className="w-full bg-primary cursor-pointer hover:bg-primary-hover transition-all duration-300 text-white font-semibold py-3 rounded"
@@ -150,8 +173,18 @@ export default function RegisterPage() {
               <div className="flex-grow border-t border-border" />
             </div>
             <div className="flex gap-3">
-              <button className="w-full flex items-center justify-center bg-background border border-border rounded py-2 text-body font-medium hover:bg-[#222] transition-colors cursor-pointer">
-                <Image alt="Google Logo" width={36} height={36} src="/Google.svg" /> Google
+              <button
+                type="button"
+                onClick={() => signIn("google")}
+                className="w-full flex items-center justify-center bg-background border border-border rounded py-2 text-body font-medium hover:bg-[#222] transition-colors cursor-pointer"
+              >
+                <Image
+                  alt="Google Logo"
+                  width={36}
+                  height={36}
+                  src="/Google.svg"
+                />
+                Google
               </button>
             </div>
           </div>

@@ -23,7 +23,7 @@ docker compose up --build
 - The **frontend** will be available at [http://localhost:3000](http://localhost:3000)
 - The **backend API** at [http://localhost:5000](http://localhost:5000)
 - The **ML microservice** at [http://localhost:8000](http://localhost:8000)
-- The **PostgreSQL database** at `localhost:5432` (user: `postgres`, password: `postgres`, db: `aimfit`)
+- The **PostgreSQL database** at `localhost:5432` (user: `postgres`, password: `root`, db: `aimfit`)
 
 ### 3. Environment Variables
 
