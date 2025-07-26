@@ -1,9 +1,11 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
@@ -59,6 +61,7 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
       });
+      router.push("/verify-email"); 
     } catch (err) {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -93,8 +96,8 @@ export default function RegisterPage() {
                   type="text"
                   value={form.firstName}
                   onChange={handleChange}
+                  required
                   className="w-full p-3 rounded border border-border bg-background text-foreground placeholder:text-body focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="First Name"
                 />
               </div>
               <div className="w-[47.5%]">
@@ -106,8 +109,8 @@ export default function RegisterPage() {
                   type="text"
                   value={form.lastName}
                   onChange={handleChange}
+                  required
                   className="w-full p-3 rounded border border-border bg-background text-foreground placeholder:text-body focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Last Name"
                 />
               </div>
             </div>
@@ -120,8 +123,8 @@ export default function RegisterPage() {
                 type="email"
                 value={form.email}
                 onChange={handleChange}
+                required
                 className="w-full p-3 rounded border border-border bg-background text-foreground placeholder:text-body focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Email"
               />
             </div>
             <div>
@@ -133,8 +136,8 @@ export default function RegisterPage() {
                 type="password"
                 value={form.password}
                 onChange={handleChange}
+                required
                 className="w-full p-3 rounded border border-border bg-background text-foreground placeholder:text-body focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Password"
               />
             </div>
             <div>
@@ -146,17 +149,12 @@ export default function RegisterPage() {
                 type="password"
                 value={form.confirmPassword}
                 onChange={handleChange}
+                required
                 className="w-full p-3 rounded border border-border bg-background text-foreground placeholder:text-body focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="Confirm Password"
               />
             </div>
             {error && (
               <div className="text-red-500 font-medium text-sm">{error}</div>
-            )}
-            {success && (
-              <div className="text-green-500 font-medium text-sm">
-                {success}
-              </div>
             )}
             <button
               type="submit"
