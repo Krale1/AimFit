@@ -29,10 +29,8 @@ export default function VerifyEmailPage() {
         return;
       }
 
-      // Save JWT token (you can also store in cookie, or use context)
       localStorage.setItem("token", data.token);
 
-      // Redirect to dashboard
       router.push("/dashboard");
     } catch {
       setError("Something went wrong.");
